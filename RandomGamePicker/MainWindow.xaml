@@ -4,50 +4,115 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RandomGamePicker"
+        xmlns:conv="clr-namespace:RandomGamePicker.Converters"
         mc:Ignorable="d"
         Title="Random Game Picker" Height="600" Width="900"
-        AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
-    <Grid Margin="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        AllowsTransparency="False"
+        AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver"
+        Style="{StaticResource CustomWindowStyle}"
+     Icon="pack://application:,,,/RandomGamePicker;component/Resources/Images/RGP_Icon.ico">
+    <Window.Resources>
+        <conv:FileIconConverter x:Key="FileIconConverter"/>
+    </Window.Resources>
+    <Grid >
+        <Grid.Background>
+            <RadialGradientBrush GradientOrigin="0.3,0.2" Center="0.35,0.15" RadiusX="1" RadiusY="1">
+                <GradientStop Color="#15192A" Offset="0"/>
+                <GradientStop Color="#0B0D12" Offset="1"/>
+            </RadialGradientBrush>
+        </Grid.Background>
 
+        <Grid Margin="16" SnapsToDevicePixels="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- Top Bar: Actions -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0 0 0 8">
-            <Button Style="{StaticResource PrimaryButton}" Click="RescanDesktop_Click">Rescan Desktop</Button>
-            <Button Style="{StaticResource PrimaryButton}" Click="AddShortcuts_Click">Add Shortcuts…</Button>
-            <Button Style="{StaticResource PrimaryButton}" Click="RemoveMissing_Click">Remove Missing</Button>
-            <Separator Width="12"/>
-            <Button Style="{StaticResource PrimaryButton}" Click="SelectAll_Click">Select All</Button>
-            <Button Style="{StaticResource PrimaryButton}" Click="SelectNone_Click">Select None</Button>
-            <Separator Width="12"/>
-            <CheckBox x:Name="OnlyShowIncluded" VerticalAlignment="Center" Margin="8,0" Content="Only show included" Checked="FilterChanged" Unchecked="FilterChanged"/>
-            <TextBox x:Name="SearchBox" Width="220" Margin="8,0" VerticalContentAlignment="Center"
-                Style="{StaticResource WatermarkTextBox}" Tag="Search…" TextChanged="FilterChanged"/>
-        </StackPanel>
+            <!-- Top Bar -->
+            <Border Grid.Row="0" Padding="12" Background="{StaticResource BrushBg1}"
+                    CornerRadius="10" BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="1" Effect="{StaticResource SoftShadow}" Margin="0,0,0,12">
+                <DockPanel LastChildFill="False">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                        <Button Style="{StaticResource PrimaryButton}" Click="RescanDesktop_Click" Margin="0,0,5,0">Rescan Desktop</Button>
+                        <Separator Width="100" Background="Transparent"/>
+                        <Button Style="{StaticResource GhostButton}" Click="AddShortcuts_Click" Margin="0,0,5,0">Add Shortcuts…</Button>
+                        <Button Style="{StaticResource GhostButton}" Click="RemoveMissing_Click" Margin="0,0,5,0">Remove Missing</Button>
+                        <Separator Width="100" Background="Transparent"/>
+                        <Button Style="{StaticResource GhostButton}" Click="SelectAll_Click" Margin="0,0,5,0">Select All</Button>
+                        <Button Style="{StaticResource GhostButton}" Click="SelectNone_Click" Margin="0,0,5,0">Select None</Button>
+                    </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                        <CheckBox x:Name="OnlyShowIncluded" VerticalAlignment="Center"
+                                  Content="Only show included" Checked="FilterChanged" Unchecked="FilterChanged"/>
+                        <TextBox x:Name="SearchBox" Width="240"
+                                 Style="{StaticResource WatermarkTextBox}"
+                                 Tag="Search…"
+                                 TextChanged="FilterChanged"
+                                 VerticalContentAlignment="Center"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
 
-        <!-- Main List -->
-        <DataGrid x:Name="GamesGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" IsReadOnly="False"
-            CanUserAddRows="False" SelectionMode="Extended" Margin="0,0,0,8">
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding Included, Mode=TwoWay}" Header="Include" Width="80"/>
-                <DataGridTextColumn Binding="{Binding Name}" Header="Game" Width="*" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Path}" Header="Shortcut / Executable" Width="2*" IsReadOnly="True"/>
-            </DataGrid.Columns>
-        </DataGrid>
+            <!-- Main List -->
+            <Border Grid.Row="1" Background="{StaticResource BrushBg1}"
+                    CornerRadius="10" BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="1" Padding="0" Effect="{StaticResource SoftShadow}"
+                          ClipToBounds="True">
+                <DataGrid x:Name="GamesGrid"
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="Column"
+                          Background="Transparent"
+                          CanUserAddRows="False"
+                          IsReadOnly="False" Margin="0">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Include" Width="100" IsReadOnly="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Style="{StaticResource ToggleSwitch}"
+                      IsChecked="{Binding Included, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      AutomationProperties.Name="{Binding Name}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <CheckBox Style="{StaticResource ToggleSwitch}"
+                      IsChecked="{Binding Included, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      AutomationProperties.Name="{Binding Name}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Game" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                                        <Image Width="16" Height="16" Margin="0,0,8,0"
+               Source="{Binding Path, Converter={StaticResource FileIconConverter}}"
+               SnapsToDevicePixels="True"
+               RenderOptions.BitmapScalingMode="Fant"/>
+                                        <!-- crisp -->
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Binding="{Binding Path}" Header="Shortcut / Executable"
+                                            Width="2*" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
 
-
-        <!-- Bottom Bar: Randomize & Run -->
-        <DockPanel Grid.Row="2">
-            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="4"/>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                <Button Style="{StaticResource PrimaryButton}" Click="Roll_Click">Roll</Button>
-                <Button Style="{StaticResource PrimaryButton}" Click="Run_Click">Run</Button>
-            </StackPanel>
-        </DockPanel>
+            <!-- Bottom Bar -->
+            <DockPanel Grid.Row="2" Margin="0,12,0,0">
+                <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="4,0"
+                           Foreground="{StaticResource BrushTextDim}"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" >
+                    <Button Style="{StaticResource GhostButton}" Click="Roll_Click" Margin="0,0,5,0">Roll</Button>
+                    <Button Style="{StaticResource PrimaryButton}" Click="Run_Click">Run</Button>
+                </StackPanel>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>

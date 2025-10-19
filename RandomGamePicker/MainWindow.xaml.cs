@@ -49,6 +49,22 @@ namespace RandomGamePicker
             _viewSource.Source = _games;
             _viewSource.Filter += ApplyFilter;
             GamesGrid.ItemsSource = _viewSource.View;
+
+            CommandBindings.Add(new CommandBinding(
+    SystemCommands.CloseWindowCommand,
+    (s, e) => SystemCommands.CloseWindow(this)));
+
+            CommandBindings.Add(new CommandBinding(
+                SystemCommands.MinimizeWindowCommand,
+                (s, e) => SystemCommands.MinimizeWindow(this)));
+
+            CommandBindings.Add(new CommandBinding(
+                SystemCommands.MaximizeWindowCommand,
+                (s, e) => SystemCommands.MaximizeWindow(this)));
+
+            CommandBindings.Add(new CommandBinding(
+                SystemCommands.RestoreWindowCommand,
+                (s, e) => SystemCommands.RestoreWindow(this)));
         }
 
         // --- UI Actions ---
@@ -263,5 +279,8 @@ namespace RandomGamePicker
             GameStore.Save(_games);
             base.OnClosed(e);
         }
+
+
+
     }
 }

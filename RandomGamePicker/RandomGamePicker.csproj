@@ -9,4 +9,12 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Resources\Images\RGP_Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\RGP_Icon.ico" />
+  </ItemGroup>
+
 </Project>
