@@ -6,47 +6,6 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <!--<Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Margin" Value="4"/>
-            <Setter Property="Padding" Value="10,6"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-        </Style>
-
-        -->
-        <!-- Watermark / Placeholder style for TextBox (WPF doesn't have PlaceholderText) -->
-        <!--
-        <Style x:Key="WatermarkTextBox" TargetType="TextBox">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Grid>
-                            <ScrollViewer x:Name="PART_ContentHost"/>
-                            <TextBlock Margin="6,0"
-                                    IsHitTestVisible="False"
-                                    Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
-                                    Text="{TemplateBinding Tag}"
-                                    VerticalAlignment="Center">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value=""/>
-                                                    <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource TemplatedParent}}" Value="False"/>
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-
         <Color x:Key="Bg0">#0B0D12</Color>
         <Color x:Key="Bg1">#121520</Color>
         <Color x:Key="Bg2">#1A1F2E</Color>
@@ -72,8 +31,6 @@
         <SolidColorBrush x:Key="BrushAccentPressed" Color="{StaticResource AccentPressed}"/>
         <SolidColorBrush x:Key="BrushDanger" Color="{StaticResource Danger}"/>
 
-        <!--<x:Double x:Key="CornerRadius">10</x:Double>
-   <x:Double x:Key="ControlHeight">34</x:Double>-->
         <FontFamily x:Key="UiFont">Segoe UI Variable, Segoe UI, Inter, Roboto</FontFamily>
 
         <DropShadowEffect x:Key="SoftShadow" Color="#000000" BlurRadius="16" ShadowDepth="0" Opacity="0.3"/>

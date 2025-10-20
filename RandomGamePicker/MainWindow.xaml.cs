@@ -1,9 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using Microsoft.Win32;
 using RandomGamePicker.Models;
 using RandomGamePicker.Services;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,10 +29,13 @@ namespace RandomGamePicker
         private readonly Random _rng = Random.Shared;
         private GameEntry? _lastRolled;
 
+        // Keyboard command for Ctrl+R
+        private readonly RoutedUICommand _rollAndRunCommand =
+            new("Roll & Run", "RollAndRun", typeof(MainWindow));
+
         public MainWindow()
         {
             InitializeComponent();
-
 
             // Load saved list (if any), otherwise auto-scan desktop shortcuts
             var loaded = GameStore.Load();
@@ -45,14 +50,13 @@ namespace RandomGamePicker
                 foreach (var g in loaded) _games.Add(g);
             }
 
-
             _viewSource.Source = _games;
             _viewSource.Filter += ApplyFilter;
             GamesGrid.ItemsSource = _viewSource.View;
 
             CommandBindings.Add(new CommandBinding(
-    SystemCommands.CloseWindowCommand,
-    (s, e) => SystemCommands.CloseWindow(this)));
+                SystemCommands.CloseWindowCommand,
+                (s, e) => SystemCommands.CloseWindow(this)));
 
             CommandBindings.Add(new CommandBinding(
                 SystemCommands.MinimizeWindowCommand,
@@ -65,6 +69,13 @@ namespace RandomGamePicker
             CommandBindings.Add(new CommandBinding(
                 SystemCommands.RestoreWindowCommand,
                 (s, e) => SystemCommands.RestoreWindow(this)));
+
+            // Ctrl+R = Roll & Run
+            InputBindings.Add(new KeyBinding(
+                _rollAndRunCommand,
+                new KeyGesture(Key.R, ModifierKeys.Control)));
+            CommandBindings.Add(new CommandBinding(
+                _rollAndRunCommand, (s, e) => RollAndRun()));
         }
 
         // --- UI Actions ---
@@ -138,6 +149,23 @@ namespace RandomGamePicker
             StatusText.Text = $"Rolled: {_lastRolled.Name}";
         }
 
+        private void RollAndRun()
+        {
+            var pool = _games.Where(g => g.Included).ToList();
+            if (pool.Count == 0)
+            {
+                StatusText.Text = "No games are included. Check some boxes first.";
+                _lastRolled = null;
+                return;
+            }
+
+            var pick = pool[_rng.Next(pool.Count)];
+            _lastRolled = pick;
+            StatusText.Text = $"Rolled: {pick.Name}";
+
+            Launch(pick);
+        }
+
         private void Run_Click(object sender, RoutedEventArgs e)
         {
             if (_lastRolled == null)
@@ -147,22 +175,32 @@ namespace RandomGamePicker
                 if (_lastRolled == null) return;
             }
 
+            Launch(_lastRolled);
+        }
 
+        private void Launch(GameEntry g)
+        {
             try
             {
                 var psi = new ProcessStartInfo
                 {
-                    FileName = _lastRolled.Path,
-                    UseShellExecute = true // allows launching .lnk directly
+                    FileName = g.Path,
+                    UseShellExecute = true // allows launching .lnk and .url (shell resolves)
                 };
                 Process.Start(psi);
-                StatusText.Text = $"Launching: {_lastRolled.Name}";
+                StatusText.Text = $"Launching: {g.Name}";
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to launch '{_lastRolled.Name}'.\n{ex.Message}", "Launch Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Failed to launch '{g.Name}'.\n{ex.Message}",
+                    "Launch Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
+
+        private void BtnRollRun_Click(object sender, RoutedEventArgs e) => RollAndRun();
 
         // --- Drag & Drop support ---
         private void Window_DragOver(object sender, DragEventArgs e)
@@ -198,9 +236,7 @@ namespace RandomGamePicker
         {
             if (e.Item is not GameEntry g) { e.Accepted = false; return; }
 
-
             if (OnlyShowIncluded.IsChecked == true && !g.Included) { e.Accepted = false; return; }
-
 
             var q = SearchBox.Text?.Trim();
             if (!string.IsNullOrEmpty(q))
@@ -225,7 +261,6 @@ namespace RandomGamePicker
                 Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory)
             };
-
 
             var results = new List<GameEntry>();
             foreach (var desk in desktops)
@@ -279,8 +314,5 @@ namespace RandomGamePicker
             GameStore.Save(_games);
             base.OnClosed(e);
         }
-
-
-
     }
 }

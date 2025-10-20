@@ -10,11 +10,11 @@
         AllowsTransparency="False"
         AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver"
         Style="{StaticResource CustomWindowStyle}"
-     Icon="pack://application:,,,/RandomGamePicker;component/Resources/Images/RGP_Icon.ico">
+        Icon="pack://application:,,,/RandomGamePicker;component/Resources/Images/RGP_Icon.ico">
     <Window.Resources>
         <conv:FileIconConverter x:Key="FileIconConverter"/>
     </Window.Resources>
-    <Grid >
+    <Grid>
         <Grid.Background>
             <RadialGradientBrush GradientOrigin="0.3,0.2" Center="0.35,0.15" RadiusX="1" RadiusY="1">
                 <GradientStop Color="#15192A" Offset="0"/>
@@ -34,7 +34,7 @@
                     CornerRadius="10" BorderBrush="{StaticResource BrushBorder}"
                     BorderThickness="1" Effect="{StaticResource SoftShadow}" Margin="0,0,0,12">
                 <DockPanel LastChildFill="False">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <Button Style="{StaticResource PrimaryButton}" Click="RescanDesktop_Click" Margin="0,0,5,0">Rescan Desktop</Button>
                         <Separator Width="100" Background="Transparent"/>
                         <Button Style="{StaticResource GhostButton}" Click="AddShortcuts_Click" Margin="0,0,5,0">Add Shortcuts…</Button>
@@ -60,7 +60,7 @@
             <Border Grid.Row="1" Background="{StaticResource BrushBg1}"
                     CornerRadius="10" BorderBrush="{StaticResource BrushBorder}"
                     BorderThickness="1" Padding="0" Effect="{StaticResource SoftShadow}"
-                          ClipToBounds="True">
+                    ClipToBounds="True">
                 <DataGrid x:Name="GamesGrid"
                           AutoGenerateColumns="False"
                           HeadersVisibility="Column"
@@ -72,27 +72,26 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox Style="{StaticResource ToggleSwitch}"
-                      IsChecked="{Binding Included, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      AutomationProperties.Name="{Binding Name}"/>
+                                              IsChecked="{Binding Included, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              AutomationProperties.Name="{Binding Name}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                             <DataGridTemplateColumn.CellEditingTemplate>
                                 <DataTemplate>
                                     <CheckBox Style="{StaticResource ToggleSwitch}"
-                      IsChecked="{Binding Included, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      AutomationProperties.Name="{Binding Name}" />
+                                              IsChecked="{Binding Included, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              AutomationProperties.Name="{Binding Name}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Game" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Width="16" Height="16" Margin="0,0,8,0"
-               Source="{Binding Path, Converter={StaticResource FileIconConverter}}"
-               SnapsToDevicePixels="True"
-               RenderOptions.BitmapScalingMode="Fant"/>
-                                        <!-- crisp -->
+                                               Source="{Binding Path, Converter={StaticResource FileIconConverter}}"
+                                               SnapsToDevicePixels="True"
+                                               RenderOptions.BitmapScalingMode="Fant"/>
                                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>
@@ -108,9 +107,17 @@
             <DockPanel Grid.Row="2" Margin="0,12,0,0">
                 <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="4,0"
                            Foreground="{StaticResource BrushTextDim}"/>
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" >
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                     <Button Style="{StaticResource GhostButton}" Click="Roll_Click" Margin="0,0,5,0">Roll</Button>
                     <Button Style="{StaticResource PrimaryButton}" Click="Run_Click">Run</Button>
+                    <!-- Roll & Run styled primary -->
+                    <Button x:Name="BtnRollRun"
+                            Style="{StaticResource PrimaryButton}"
+                            Content="&#x1F3B2; Roll &amp; Run"
+                            Padding="12,6"
+                            Margin="5,0,0,0"
+                            Click="BtnRollRun_Click"
+                            ToolTip="Pick a random game from the current selection and launch it"/>
                 </StackPanel>
             </DockPanel>
         </Grid>
